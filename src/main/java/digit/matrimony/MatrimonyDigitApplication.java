@@ -8,6 +8,8 @@ public class MatrimonyDigitApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(MatrimonyDigitApplication.class, args);
+		System.out.println("Running");
+
 	}
 
 }
