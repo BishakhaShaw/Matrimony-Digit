@@ -1,7 +1,9 @@
+
 package digit.matrimony.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -20,18 +22,17 @@ public class Profile {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    // Profile belongs to a user. One-to-One (profile.user -> users.id)
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "user_id", foreignKey = @ForeignKey(name = "fk_profiles_users"))
     private User user;
 
+    @Column(length = 10)
     private String gender;
 
     @Column(name = "date_of_birth")
     private LocalDateTime dateOfBirth;
 
+    @Column(length = 15)
     private String phone;
 
     @Column(name = "aadhaar_number", unique = true, length = 12)
@@ -40,10 +41,19 @@ public class Profile {
     @Column(columnDefinition = "TEXT")
     private String bio;
 
+    @Column(length = 50)
     private String religion;
+
+    @Column(length = 50)
     private String caste;
+
+    @Column(length = 100)
     private String education;
+
+    @Column(length = 100)
     private String occupation;
+
+    @Column(length = 50)
     private String income;
 
     @Column(name = "current_location", length = 100)
@@ -57,9 +67,7 @@ public class Profile {
     @Column(name = "is_verified")
     private Boolean isVerified = false;
 
-    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @OneToMany(mappedBy = "profile", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
     private List<ProfilePhoto> photos = new ArrayList<>();
 }
