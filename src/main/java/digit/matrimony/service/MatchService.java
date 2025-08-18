@@ -1,5 +1,6 @@
 package digit.matrimony.service;
 
+import digit.matrimony.dto.MatchCreateRequestDTO;
 import digit.matrimony.dto.MatchDTO;
 import digit.matrimony.entity.Match;
 import digit.matrimony.entity.User;
@@ -21,9 +22,9 @@ public class MatchService {
     private final UserRepository userRepository;
     private final MatchMapper matchMapper;
 
-    public MatchDTO createMatch(Long user1Id, Long user2Id) {
-        User user1 = userRepository.findById(user1Id).orElseThrow();
-        User user2 = userRepository.findById(user2Id).orElseThrow();
+    public MatchDTO createMatch(MatchCreateRequestDTO request) {
+        User user1 = userRepository.findById(request.getUser1Id()).orElseThrow();
+        User user2 = userRepository.findById(request.getUser2Id()).orElseThrow();
 
         Match match = Match.builder()
                 .user1(user1)

@@ -1,9 +1,12 @@
 package digit.matrimony.controller;
 
+import digit.matrimony.dto.MatchCreateRequestDTO;
 import digit.matrimony.dto.MatchDTO;
 import digit.matrimony.service.MatchService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -11,14 +14,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/matches")
 @RequiredArgsConstructor
+@Validated
 public class MatchController {
 
     private final MatchService matchService;
 
     @PostMapping("/create")
-    public ResponseEntity<MatchDTO> createMatch(@RequestParam Long user1Id, @RequestParam Long user2Id) {
-        return ResponseEntity.ok(matchService.createMatch(user1Id, user2Id));
+    public ResponseEntity<MatchDTO> createMatch(@Valid @RequestBody MatchCreateRequestDTO request) {
+        return ResponseEntity.ok(matchService.createMatch(request));
     }
+
 
     @GetMapping("/user/{userId}")
     public ResponseEntity<List<MatchDTO>> getMatchesForUser(@PathVariable Long userId) {
