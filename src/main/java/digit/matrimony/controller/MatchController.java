@@ -20,7 +20,7 @@ public class MatchController {
     private final MatchService matchService;
 
     @PostMapping("/create")
-    public ResponseEntity<MatchDTO> createMatch(@Valid @RequestBody MatchCreateRequestDTO request) {
+    public ResponseEntity<MatchDTO> createMatch(@Valid @RequestBody MatchDTO request) {
         return ResponseEntity.ok(matchService.createMatch(request));
     }
 
@@ -31,9 +31,12 @@ public class MatchController {
     }
 
     @PutMapping("/{matchId}/deactivate")
-    public ResponseEntity<MatchDTO> deactivateMatch(@PathVariable Long matchId, @RequestParam String deletedBy) {
-        return ResponseEntity.ok(matchService.deactivateMatch(matchId, deletedBy));
+    public ResponseEntity<MatchDTO> deactivateMatch(
+            @PathVariable Long matchId,
+            @RequestBody MatchDTO request) {
+        return ResponseEntity.ok(matchService.deactivateMatch(matchId, request.getDeletedBy()));
     }
+
 
     @DeleteMapping("/{matchId}")
     public ResponseEntity<Void> deleteMatch(@PathVariable Long matchId) {

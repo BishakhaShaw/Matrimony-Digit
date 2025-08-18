@@ -22,7 +22,7 @@ public class MatchService {
     private final UserRepository userRepository;
     private final MatchMapper matchMapper;
 
-    public MatchDTO createMatch(MatchCreateRequestDTO request) {
+    public MatchDTO createMatch(MatchDTO request) {
         User user1 = userRepository.findById(request.getUser1Id()).orElseThrow();
         User user2 = userRepository.findById(request.getUser2Id()).orElseThrow();
 
