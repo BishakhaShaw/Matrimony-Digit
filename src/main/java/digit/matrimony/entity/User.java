@@ -1,16 +1,8 @@
-
-
-
 package digit.matrimony.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -40,45 +32,28 @@ public class User {
     @Column(name = "permanent_location", length = 100)
     private String permanentLocation;
 
-    // ✅ Role
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "fk_users_roles"))
+    @JoinColumn(name = "role_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Role role;
 
-    // ✅ Family Member ↔ Linked User
+    // Self reference: linked to another user (for family members)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "linked_user_id", foreignKey = @ForeignKey(name = "fk_users_linked_users"))
+    @JoinColumn(name = "linked_user_id")
     @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private User linkedUser;
 
-    // ✅ Manager ↔ Users (Many-to-Many)
-    @ManyToMany
-    @JoinTable(
-            name = "manager_user_mapping",
-            joinColumns = @JoinColumn(name = "manager_id"),
-            inverseJoinColumns = @JoinColumn(name = "user_id")
-    )
-    @ToString.Exclude
-    private Set<User> managedUsers = new HashSet<>();
-
-    @ManyToMany(mappedBy = "managedUsers")
-    @ToString.Exclude
-    private Set<User> managers = new HashSet<>();
-
-    // ✅ Subscription & Status
-    @Builder.Default
     @Column(name = "subscription_type", length = 1)
     private String subscriptionType = "N";
 
-    @Builder.Default
     @Column(name = "is_active")
     private Boolean isActive = true;
 
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
-    @UpdateTimestamp
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 }

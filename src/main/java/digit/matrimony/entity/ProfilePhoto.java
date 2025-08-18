@@ -1,10 +1,7 @@
-
-
 package digit.matrimony.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,8 +17,11 @@ public class ProfilePhoto {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // Many photos -> one profile
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "profile_id", foreignKey = @ForeignKey(name = "fk_profile_photos_profiles"))
+    @JoinColumn(name = "profile_id")
+    @ToString.Exclude
+    @EqualsAndHashCode.Exclude
     private Profile profile;
 
     @Column(name = "photo_url", nullable = false, columnDefinition = "TEXT")
@@ -31,5 +31,5 @@ public class ProfilePhoto {
     private Boolean isProfilePhoto = false;
 
     @Column(name = "uploaded_at")
-    private LocalDateTime uploadedAt = LocalDateTime.now();
+    private LocalDateTime uploadedAt;
 }

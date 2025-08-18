@@ -1,5 +1,3 @@
-
-
 package digit.matrimony.entity;
 
 import jakarta.persistence.*;
@@ -12,20 +10,11 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class Role {
-
-    /**
-     * Role ID — SMALLINT because roles are limited and predefined.
-     * Example IDs: 1 = Admin, 2 = Manager, 3 = User, 4 = Family Member
-     */
+    // Not generated because schema has SMALLINT PRIMARY KEY (you may insert fixed ids)
     @Id
-    @EqualsAndHashCode.Include
     private Short id;
 
-    /**
-     * Name of the role (Admin, Manager, User, Family Member)
-     */
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 }
