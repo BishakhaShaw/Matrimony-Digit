@@ -1,6 +1,7 @@
 package digit.matrimony.controller;
 
-import digit.matrimony.dto.ManagerActionDTO;
+import digit.matrimony.dto.ManagerActionRequestDTO;
+import digit.matrimony.dto.ManagerActionResponseDTO;
 import digit.matrimony.service.ManagerActionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -15,27 +16,17 @@ public class ManagerActionController {
     private ManagerActionService managerActionService;
 
     @GetMapping
-    public List<ManagerActionDTO> getAllManagerActions() {
+    public List<ManagerActionResponseDTO> getAllManagerActions() {
         return managerActionService.getAllManagerActions();
     }
 
     @GetMapping("/{id}")
-    public ManagerActionDTO getManagerActionById(@PathVariable Long id) {
+    public ManagerActionResponseDTO getManagerActionById(@PathVariable Long id) {
         return managerActionService.getManagerActionById(id);
     }
 
     @PostMapping
-    public ManagerActionDTO createManagerAction(@RequestBody ManagerActionDTO dto) {
-        return managerActionService.createManagerAction(dto);
-    }
-
-    @PutMapping("/{id}")
-    public ManagerActionDTO updateManagerAction(@PathVariable Long id, @RequestBody ManagerActionDTO dto) {
-        return managerActionService.updateManagerAction(id, dto);
-    }
-
-    @DeleteMapping("/{id}")
-    public void deleteManagerAction(@PathVariable Long id) {
-        managerActionService.deleteManagerAction(id);
+    public ManagerActionResponseDTO createManagerAction(@RequestBody ManagerActionRequestDTO requestDTO) {
+        return managerActionService.createManagerAction(requestDTO);
     }
 }

@@ -1,6 +1,7 @@
 package digit.matrimony.service;
 
-import digit.matrimony.dto.ManagerActionDTO;
+import digit.matrimony.dto.ManagerActionRequestDTO;
+import digit.matrimony.dto.ManagerActionResponseDTO;
 import digit.matrimony.entity.ManagerAction;
 import digit.matrimony.entity.Match;
 import digit.matrimony.entity.User;
@@ -13,7 +14,6 @@ import digit.matrimony.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -28,75 +28,73 @@ public class ManagerActionService {
     @Autowired
     private MatchRepository matchRepository;
 
-    public List<ManagerActionDTO> getAllManagerActions() {
+    public List<ManagerActionResponseDTO> getAllManagerActions() {
         return managerActionRepository.findAll().stream()
-                .map(ManagerActionMapper::toDTO)
+                .map(ManagerActionMapper::toResponseDTO)
                 .toList();
     }
 
-    public ManagerActionDTO getManagerActionById(Long id) {
+    public ManagerActionResponseDTO getManagerActionById(Long id) {
         ManagerAction action = managerActionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("ManagerAction not found with id: " + id));
-        return ManagerActionMapper.toDTO(action);
+        return ManagerActionMapper.toResponseDTO(action);
     }
 
-    public ManagerActionDTO createManagerAction(ManagerActionDTO dto) {
-        ManagerAction action = new ManagerAction();
-        populateAndValidateEntities(action, dto);
-        validateNotes(dto.getNotes());
-        action.setNotes(dto.getNotes());
-        action.setActionType(dto.getActionType());
-        action.setActionTimestamp(LocalDateTime.now());
+    public ManagerActionResponseDTO createManagerAction(ManagerActionRequestDTO dto) {
+        validateRoles(dto.getUserId(), dto.getTargetUserId());
+        validateNoDuplicate(dto.getUserId(), dto.getTargetUserId(), dto.getMatchId());
 
-        ManagerAction saved = managerActionRepository.save(action);
-        return ManagerActionMapper.toDTO(saved);
-    }
+        ManagerAction action = ManagerActionMapper.toEntity(dto, userRepository, matchRepository);
 
-    public ManagerActionDTO updateManagerAction(Long id, ManagerActionDTO dto) {
-        ManagerAction existing = managerActionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("ManagerAction not found with id: " + id));
-
-        populateAndValidateEntities(existing, dto);
-        validateNotes(dto.getNotes());
-        existing.setNotes(dto.getNotes());
-        existing.setActionType(dto.getActionType());
-        existing.setActionTimestamp(LocalDateTime.now());
-
-        ManagerAction saved = managerActionRepository.save(existing);
-        return ManagerActionMapper.toDTO(saved);
-    }
-
-    public void deleteManagerAction(Long id) {
-        ManagerAction existing = managerActionRepository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("ManagerAction not found with id: " + id));
-        managerActionRepository.delete(existing);
-    }
-
-    private void populateAndValidateEntities(ManagerAction action, ManagerActionDTO dto) {
-        if (dto.getUserId() == null || dto.getTargetUserId() == null) {
-            throw new BadRequestException("User IDs must not be null.");
-        }
-
-        User user = userRepository.findById(dto.getUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
-        User targetUser = userRepository.findById(dto.getTargetUserId())
-                .orElseThrow(() -> new ResourceNotFoundException("Target user not found with id: " + dto.getTargetUserId()));
-
-        action.setUser(user);
-        action.setTargetUser(targetUser);
-
-        if (dto.getMatchId() != null) {
+        // Handle DELETE_MATCH
+        if ("DELETE_MATCH".equalsIgnoreCase(dto.getActionType())) {
             Match match = matchRepository.findById(dto.getMatchId())
                     .orElseThrow(() -> new ResourceNotFoundException("Match not found with id: " + dto.getMatchId()));
-            action.setMatch(match);
-        } else {
-            action.setMatch(null);
+            matchRepository.delete(match);
         }
+
+        // Handle APPROVE
+        else if ("APPROVE".equalsIgnoreCase(dto.getActionType())) {
+            User targetUser = userRepository.findById(dto.getTargetUserId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Target user not found with id: " + dto.getTargetUserId()));
+             // Optional: if you have a status field
+            userRepository.save(targetUser);
+        }
+
+        // Handle DISAPPROVE
+        else if ("DISAPPROVE".equalsIgnoreCase(dto.getActionType())) {
+            User targetUser = userRepository.findById(dto.getTargetUserId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Target user not found with id: " + dto.getTargetUserId()));
+            userRepository.delete(targetUser);
+        }
+
+        ManagerAction saved = managerActionRepository.save(action);
+        return ManagerActionMapper.toResponseDTO(saved);
     }
 
-    private void validateNotes(String notes) {
-        if (notes == null || notes.trim().length() < 3) {
-            throw new BadRequestException("Notes must be at least 3 characters long.");
+    private void validateRoles(Long managerId, Long userId) {
+        User manager = userRepository.findById(managerId)
+                .orElseThrow(() -> new ResourceNotFoundException("Manager not found with id: " + managerId));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + userId));
+
+        Short managerRoleId = manager.getRole() != null ? manager.getRole().getId() : null;
+        Short userRoleId = user.getRole() != null ? user.getRole().getId() : null;
+
+        if (managerRoleId == null || managerRoleId != 2) {
+            throw new BadRequestException("Only managers (roleId = 2) can perform this action.");
+        }
+
+        if (userRoleId == null || userRoleId != 3) {
+            throw new BadRequestException("Target user must have roleId = 3.");
+        }
+
+    }
+
+    private void validateNoDuplicate(Long managerId, Long userId, Long matchId) {
+        boolean exists = managerActionRepository.existsByUserIdAndTargetUserIdAndMatchId(managerId, userId, matchId);
+        if (exists) {
+            throw new BadRequestException("Duplicate action: this manager already acted on this match and user.");
         }
     }
 }

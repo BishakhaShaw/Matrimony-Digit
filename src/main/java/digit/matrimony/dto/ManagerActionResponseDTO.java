@@ -2,15 +2,19 @@ package digit.matrimony.dto;
 
 import lombok.Builder;
 import lombok.Data;
+
 import java.time.LocalDateTime;
-@Builder
+
 @Data
-public class ManagerActionDTO {
+@Builder
+public class ManagerActionResponseDTO {
     private Long id;
     private Long userId;
+    private String managerName;
     private Long targetUserId;
-    private String actionType;
+    private String targetUsername;
     private Long matchId;
-    private LocalDateTime actionTimestamp;
+    private String actionType;
     private String notes;
+    private LocalDateTime actionTimestamp;
 }
