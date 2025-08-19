@@ -12,9 +12,9 @@ public class ValidUserRoleValidator implements ConstraintValidator<ValidUserRole
             return false; // role must always be set
         }
 
-        Short role = user.getRoleId();
+        Long roleId = Long.valueOf(user.getRoleId());
 
-        switch (role) {
+        switch (roleId.intValue()) {
             case 1: // Admin
                 return true;
 
@@ -45,7 +45,7 @@ public class ValidUserRoleValidator implements ConstraintValidator<ValidUserRole
                 return true;
 
             default:
-                return false;
+                return false; // unknown role
         }
     }
 }
