@@ -1,5 +1,6 @@
 package digit.matrimony.entity;
 
+import digit.matrimony.enums.MessageStatus;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDateTime;
@@ -36,4 +37,18 @@ public class Message {
 
     @Column(name = "sent_at")
     private LocalDateTime sentAt;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MessageStatus status;
+
+    @PrePersist
+    protected void onCreate() {
+        if (this.sentAt == null) {
+            this.sentAt = LocalDateTime.now();
+        }
+        if (this.status == null) {
+            this.status = MessageStatus.SENT;
+        }
+    }
+
 }

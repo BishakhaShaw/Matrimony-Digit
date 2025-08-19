@@ -1,5 +1,6 @@
 package digit.matrimony.controller;
 
+import digit.matrimony.dto.InterestCreateRequestDTO;
 import digit.matrimony.dto.InterestDTO;
 import digit.matrimony.service.InterestService;
 import lombok.RequiredArgsConstructor;
@@ -16,10 +17,22 @@ public class InterestController {
     private final InterestService interestService;
 
     @PostMapping("/send")
-    public ResponseEntity<InterestDTO> sendInterest(@RequestParam Long senderId, @RequestParam Long receiverId) {
-        InterestDTO interest = interestService.sendInterest(senderId, receiverId);
+    public ResponseEntity<InterestDTO> sendInterest(@RequestBody InterestCreateRequestDTO request) {
+        InterestDTO interest = interestService.sendInterest(request.getSenderId(), request.getReceiverId());
         return ResponseEntity.ok(interest);
     }
+
+
+    @PutMapping("/{interestId}/accept")
+    public ResponseEntity<InterestDTO> acceptInterest(@PathVariable Long interestId) {
+        return ResponseEntity.ok(interestService.acceptInterest(interestId));
+    }
+
+    @PutMapping("/{interestId}/reject")
+    public ResponseEntity<InterestDTO> rejectInterest(@PathVariable Long interestId) {
+        return ResponseEntity.ok(interestService.rejectInterest(interestId));
+    }
+
 
     @GetMapping("/sent/{senderId}")
     public ResponseEntity<List<InterestDTO>> getSentInterests(@PathVariable Long senderId) {
@@ -33,11 +46,11 @@ public class InterestController {
         return ResponseEntity.ok(interests);
     }
 
-    @PutMapping("/{interestId}/status")
-    public ResponseEntity<InterestDTO> updateStatus(@PathVariable Long interestId, @RequestParam String status) {
-        InterestDTO updated = interestService.updateInterestStatus(interestId, status);
-        return ResponseEntity.ok(updated);
-    }
+//    @PutMapping("/{interestId}/status")
+//    public ResponseEntity<InterestDTO> updateStatus(@PathVariable Long interestId, @RequestParam String status) {
+//        InterestDTO updated = interestService.updateInterestStatus(interestId, status);
+//        return ResponseEntity.ok(updated);
+//    }
 
     @DeleteMapping("/{interestId}")
     public ResponseEntity<Void> deleteInterest(@PathVariable Long interestId) {
