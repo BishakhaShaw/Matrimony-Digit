@@ -1,18 +1,11 @@
 package digit.matrimony.controller;
 
-import digit.matrimony.dto.ReportDTO;
+import digit.matrimony.dto.ReportRequestDTO;
+import digit.matrimony.dto.ReportResponseDTO;
 import digit.matrimony.service.ReportService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import digit.matrimony.dto.ReportDTO;
-import digit.matrimony.service.ReportService;
-import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-
 
 import java.util.List;
 
@@ -24,22 +17,22 @@ public class ReportController {
     private ReportService reportService;
 
     @GetMapping
-    public List<ReportDTO> getAllReports() {
+    public List<ReportResponseDTO> getAllReports() {
         return reportService.getAllReports();
     }
 
     @GetMapping("/{id}")
-    public ReportDTO getReportById(@PathVariable Long id) {
+    public ReportResponseDTO getReportById(@PathVariable Long id) {
         return reportService.getReportById(id);
     }
 
     @PostMapping
-    public ReportDTO createReport(@RequestBody @Valid ReportDTO dto) {
+    public ReportResponseDTO createReport(@RequestBody @Valid ReportRequestDTO dto) {
         return reportService.createReport(dto);
     }
 
     @PutMapping("/{id}")
-    public ReportDTO updateReport(@PathVariable Long id, @RequestBody @Valid ReportDTO dto) {
+    public ReportResponseDTO updateReport(@PathVariable Long id, @RequestBody @Valid ReportRequestDTO dto) {
         return reportService.updateReport(id, dto);
     }
 

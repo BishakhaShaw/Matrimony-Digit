@@ -1,6 +1,6 @@
 package digit.matrimony.service;
 
-import digit.matrimony.dto.SubscriptionDTO;
+import digit.matrimony.dto.SubscriptionRequestDTO;
 import digit.matrimony.entity.Subscription;
 import digit.matrimony.entity.User;
 import digit.matrimony.exception.ResourceNotFoundException;
@@ -30,11 +30,28 @@ public class SubscriptionService {
                 .orElseThrow(() -> new ResourceNotFoundException("Subscription not found with id: " + id));
     }
 
-    public Subscription createSubscription(SubscriptionDTO dto) {
+    public Subscription createSubscription(SubscriptionRequestDTO dto) {
         validateUserId(dto.getUserId());
 
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
+
+        // Check roleId
+        if (user.getRole() == null || user.getRole().getId() != 3) {
+            throw new IllegalArgumentException("Only users with role ID = 3 can subscribe.");
+        }
+
+        // Check for existing identical subscription
+        boolean exists = subscriptionRepository.existsByUserIdAndPlanNameAndStartDateAndEndDate(
+                dto.getUserId(),
+                dto.getPlanName(),
+                dto.getStartDate(),
+                dto.getEndDate()
+        );
+
+        if (exists) {
+            throw new IllegalStateException("User already has this subscription.");
+        }
 
         Subscription subscription = SubscriptionMapper.toEntity(dto);
         subscription.setUser(user);
@@ -42,7 +59,7 @@ public class SubscriptionService {
         return subscriptionRepository.save(subscription);
     }
 
-    public Subscription updateSubscription(Long id, SubscriptionDTO dto) {
+    public Subscription updateSubscription(Long id, SubscriptionRequestDTO dto) {
         Subscription existing = subscriptionRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Subscription not found with id: " + id));
 
@@ -50,6 +67,10 @@ public class SubscriptionService {
 
         User user = userRepository.findById(dto.getUserId())
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + dto.getUserId()));
+
+        if (user.getRole() == null || user.getRole().getId() != 3) {
+            throw new IllegalArgumentException("Only users with role ID = 3 can subscribe.");
+        }
 
         Subscription updated = SubscriptionMapper.toEntity(dto);
         updated.setId(id);
@@ -68,5 +89,9 @@ public class SubscriptionService {
         if (userId == null) {
             throw new IllegalArgumentException("User ID must be provided.");
         }
+    }
+
+    public boolean hasActiveSubscription(Long userId) {
+        return subscriptionRepository.findActiveSubscriptionByUserId(userId).isPresent();
     }
 }
