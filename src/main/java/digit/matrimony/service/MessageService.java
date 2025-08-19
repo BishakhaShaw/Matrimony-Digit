@@ -31,8 +31,8 @@ public class MessageService {
         User receiver = userRepository.findById(request.getReceiverId())
                 .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
-        boolean isMatched = matchRepository.existsByUser1AndUser2AndMatchedTrue(sender, receiver)
-                || matchRepository.existsByUser1AndUser2AndMatchedTrue(receiver, sender);
+        boolean isMatched = matchRepository.existsMatchedBetweenUsers(sender, receiver)
+                || matchRepository.existsMatchedBetweenUsers(receiver, sender);
 
         if (!isMatched) {
             throw new RuntimeException("Users are not matched. Messaging not allowed.");
