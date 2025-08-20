@@ -6,6 +6,7 @@ import digit.matrimony.entity.Role;
 import digit.matrimony.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface UserRepository extends JpaRepository<User, Long> {
@@ -22,4 +23,6 @@ public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByUsernameIgnoreCaseOrEmailIgnoreCase(String username, String email);
 
     boolean existsByRole(Role role);
+    List<User> findByRoleName(String roleName);
+
 }

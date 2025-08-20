@@ -1,5 +1,6 @@
 package digit.matrimony.service;
 
+import digit.matrimony.dto.MatchCreateRequestDTO;
 import digit.matrimony.dto.MatchDTO;
 import digit.matrimony.entity.Match;
 import digit.matrimony.entity.User;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -21,9 +23,10 @@ public class MatchService {
     private final UserRepository userRepository;
     private final MatchMapper matchMapper;
 
-    public MatchDTO createMatch(Long user1Id, Long user2Id) {
-        User user1 = userRepository.findById(user1Id).orElseThrow();
-        User user2 = userRepository.findById(user2Id).orElseThrow();
+    public MatchDTO createMatch(MatchDTO request) {
+
+        User user1 = userRepository.findById(request.getUser1Id()).orElseThrow();
+        User user2 = userRepository.findById(request.getUser2Id()).orElseThrow();
 
         Match match = Match.builder()
                 .user1(user1)
@@ -34,6 +37,30 @@ public class MatchService {
 
         return matchMapper.toDto(matchRepository.save(match));
     }
+    public MatchDTO createMatch(Long user1Id, Long user2Id) {
+        Optional<Match> existingMatch = matchRepository.findByUserIds(user1Id, user2Id);
+        if (existingMatch.isPresent()) {
+            return matchMapper.toDto(existingMatch.get());
+        }
+
+        User user1 = userRepository.findById(user1Id).orElseThrow(() -> new RuntimeException("User1 not found"));
+        User user2 = userRepository.findById(user2Id).orElseThrow(() -> new RuntimeException("User2 not found"));
+
+        Match match = Match.builder()
+                .user1(user1)
+                .user2(user2)
+                .matchedAt(LocalDateTime.now())
+                .isActive(true)
+                .build();
+
+        return matchMapper.toDto(matchRepository.save(match));
+    }
+
+    public int getActiveMatchCount(Long userId) {
+        return matchRepository.countActiveMatchesByUserId(userId);
+    }
+
+
 
     public List<MatchDTO> getMatchesForUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();
