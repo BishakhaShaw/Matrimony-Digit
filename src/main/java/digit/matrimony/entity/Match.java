@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Match {
+public class  Match {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

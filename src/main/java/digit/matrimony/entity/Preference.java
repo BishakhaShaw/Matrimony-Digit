@@ -10,18 +10,20 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Preference {
+public class    Preference {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     // preferences belong to a user
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", unique = true)
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private User user;
+
 
     @Column(name = "preferred_age_min")
     private Integer preferredAgeMin;
