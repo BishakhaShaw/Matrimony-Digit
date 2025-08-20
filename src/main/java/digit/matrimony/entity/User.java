@@ -95,6 +95,61 @@
 
 
 
+//
+//package digit.matrimony.entity;
+//
+//import jakarta.persistence.*;
+//import lombok.*;
+//
+//@Entity
+//@Table(name = "users")
+//@Getter
+//@Setter
+//@NoArgsConstructor
+//@AllArgsConstructor
+//@Builder
+//public class User {
+//
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    private Long id;
+//
+//    @Column(unique = true, nullable = false)
+//    private String username;
+//
+//    @Column(unique = true, nullable = false)
+//    private String email;
+//
+//    @Column(name = "password_hash", nullable = false)
+//    private String passwordHash;
+//
+//    @Column(name = "password_salt")
+//    private String passwordSalt;
+//
+//    @ManyToOne
+//    @JoinColumn(name = "role_id")
+//    private Role role;
+//
+//    private String permanentLocation;
+//    private String subscriptionType;
+//    private Boolean isActive;
+//}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 package digit.matrimony.entity;
 
@@ -114,6 +169,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    // --- Credentials ---
     @Column(unique = true, nullable = false)
     private String username;
 
@@ -126,11 +182,25 @@ public class User {
     @Column(name = "password_salt")
     private String passwordSalt;
 
+    // --- Role ---
     @ManyToOne
     @JoinColumn(name = "role_id")
     private Role role;
 
+    // --- User Info ---
     private String permanentLocation;
     private String subscriptionType;
     private Boolean isActive;
+
+    // --- Family Member Flow ---
+    @Column(name = "is_family_member")
+    private Boolean isFamilyMember = false;  // default: false
+
+    @ManyToOne
+    @JoinColumn(name = "linked_user_id")
+    private User linkedUser;  // parent user reference (if family member)
+
+    // --- System Generated ---
+    @Column(name = "generated_password")
+    private String generatedPassword;  // for auto-generated passwords
 }
