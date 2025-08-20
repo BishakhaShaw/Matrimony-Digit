@@ -60,25 +60,21 @@ public class User {
     )
     @ToString.Exclude
     private Set<User> managedUsers = new HashSet<>();
+    // --- User Info ---
 
-    @ManyToMany(mappedBy = "managedUsers")
-    @ToString.Exclude
-    private Set<User> managers = new HashSet<>();
+
+    private Boolean isActive;
+
+    // --- Family Member Flow ---
+    @Column(name = "is_family_member")
+    private Boolean isFamilyMember = false;  // default: false
 
     //  Subscription & Status
     @Builder.Default
     @Column(name = "subscription_type", length = 1)
     private String subscriptionType = "N";
 
-    @Builder.Default
-    @Column(name = "is_active")
-    private Boolean isActive = true;
-
-    @CreationTimestamp
-    @Column(name = "created_at", updatable = false)
-    private LocalDateTime createdAt;
-
-    @UpdateTimestamp
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    // --- System Generated ---
+    @Column(name = "generated_password")
+    private String generatedPassword;  // for auto-generated passwords
 }
