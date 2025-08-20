@@ -10,6 +10,9 @@ public class PreferenceDTO {
 
     private Long id;
 
+    private String preferredGender;
+
+
     private Long userId; // Reference to User entity by ID
 
     private Integer preferredAgeMin;

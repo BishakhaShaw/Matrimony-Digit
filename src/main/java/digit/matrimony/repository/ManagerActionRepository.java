@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface ManagerActionRepository extends JpaRepository<ManagerAction, Long> {
+    boolean existsByUserIdAndTargetUserIdAndMatchId(Long userId, Long targetUserId, Long matchId);
+
 }

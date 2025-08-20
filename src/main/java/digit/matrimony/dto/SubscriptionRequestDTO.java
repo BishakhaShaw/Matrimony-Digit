@@ -1,17 +1,17 @@
 package digit.matrimony.dto;
 
-import lombok.Builder;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+
 import java.math.BigDecimal;
 import java.time.LocalDate;
-@Builder
 @Data
-public class SubscriptionDTO {
-    private Long id;
+public class SubscriptionRequestDTO {
     private Long userId;
     private String planName;
     private BigDecimal amount;
     private LocalDate startDate;
     private LocalDate endDate;
-    private String paymentStatus;
 }
+
