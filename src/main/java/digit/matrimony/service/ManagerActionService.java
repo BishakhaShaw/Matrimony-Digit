@@ -45,31 +45,49 @@ public class ManagerActionService {
         validateNoDuplicate(dto.getUserId(), dto.getTargetUserId(), dto.getMatchId());
 
         ManagerAction action = ManagerActionMapper.toEntity(dto, userRepository, matchRepository);
+        handleActionType(dto);
 
-        // Handle DELETE_MATCH
-        if ("DELETE_MATCH".equalsIgnoreCase(dto.getActionType())) {
+        ManagerAction saved = managerActionRepository.save(action);
+        return ManagerActionMapper.toResponseDTO(saved);
+    }
+
+    public ManagerActionResponseDTO updateManagerAction(Long id, ManagerActionRequestDTO dto) {
+        ManagerAction existing = managerActionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ManagerAction not found with id: " + id));
+
+        validateRoles(dto.getUserId(), dto.getTargetUserId());
+
+        ManagerAction updated = ManagerActionMapper.toEntity(dto, userRepository, matchRepository);
+        updated.setId(existing.getId()); // preserve original ID
+
+        handleActionType(dto);
+
+        ManagerAction saved = managerActionRepository.save(updated);
+        return ManagerActionMapper.toResponseDTO(saved);
+    }
+
+    public void deleteManagerAction(Long id) {
+        ManagerAction action = managerActionRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("ManagerAction not found with id: " + id));
+        managerActionRepository.delete(action);
+    }
+
+    private void handleActionType(ManagerActionRequestDTO dto) {
+        String type = dto.getActionType();
+
+        if ("DELETE_MATCH".equalsIgnoreCase(type)) {
             Match match = matchRepository.findById(dto.getMatchId())
                     .orElseThrow(() -> new ResourceNotFoundException("Match not found with id: " + dto.getMatchId()));
             matchRepository.delete(match);
-        }
-
-        // Handle APPROVE
-        else if ("APPROVE".equalsIgnoreCase(dto.getActionType())) {
+        } else if ("APPROVE".equalsIgnoreCase(type)) {
             User targetUser = userRepository.findById(dto.getTargetUserId())
                     .orElseThrow(() -> new ResourceNotFoundException("Target user not found with id: " + dto.getTargetUserId()));
-             // Optional: if you have a status field
-            userRepository.save(targetUser);
-        }
-
-        // Handle DISAPPROVE
-        else if ("DISAPPROVE".equalsIgnoreCase(dto.getActionType())) {
+            userRepository.save(targetUser); // Optional: update status or flags
+        } else if ("DISAPPROVE".equalsIgnoreCase(type)) {
             User targetUser = userRepository.findById(dto.getTargetUserId())
                     .orElseThrow(() -> new ResourceNotFoundException("Target user not found with id: " + dto.getTargetUserId()));
             userRepository.delete(targetUser);
         }
-
-        ManagerAction saved = managerActionRepository.save(action);
-        return ManagerActionMapper.toResponseDTO(saved);
     }
 
     private void validateRoles(Long managerId, Long userId) {
@@ -88,7 +106,6 @@ public class ManagerActionService {
         if (userRoleId == null || userRoleId != 3) {
             throw new BadRequestException("Target user must have roleId = 3.");
         }
-
     }
 
     private void validateNoDuplicate(Long managerId, Long userId, Long matchId) {

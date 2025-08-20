@@ -29,4 +29,15 @@ public class ManagerActionController {
     public ManagerActionResponseDTO createManagerAction(@RequestBody ManagerActionRequestDTO requestDTO) {
         return managerActionService.createManagerAction(requestDTO);
     }
+
+    @PutMapping("/{id}")
+    public ManagerActionResponseDTO updateManagerAction(@PathVariable Long id,
+                                                        @RequestBody ManagerActionRequestDTO requestDTO) {
+        return managerActionService.updateManagerAction(id, requestDTO);
+    }
+
+    @DeleteMapping("/{id}")
+    public void deleteManagerAction(@PathVariable Long id) {
+        managerActionService.deleteManagerAction(id);
+    }
 }

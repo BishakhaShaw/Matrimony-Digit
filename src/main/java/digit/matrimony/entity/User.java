@@ -40,18 +40,18 @@ public class User {
     @Column(name = "permanent_location", length = 100)
     private String permanentLocation;
 
-    // ✅ Role
+    //  Role
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "fk_users_roles"))
     private Role role;
 
-    // ✅ Family Member ↔ Linked User
+    //  Family Member ↔ Linked User
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "linked_user_id", foreignKey = @ForeignKey(name = "fk_users_linked_users"))
     @ToString.Exclude
     private User linkedUser;
 
-    // ✅ Manager ↔ Users (Many-to-Many)
+    //  Manager ↔ Users (Many-to-Many)
     @ManyToMany
     @JoinTable(
             name = "manager_user_mapping",
@@ -65,7 +65,7 @@ public class User {
     @ToString.Exclude
     private Set<User> managers = new HashSet<>();
 
-    // ✅ Subscription & Status
+    //  Subscription & Status
     @Builder.Default
     @Column(name = "subscription_type", length = 1)
     private String subscriptionType = "N";
