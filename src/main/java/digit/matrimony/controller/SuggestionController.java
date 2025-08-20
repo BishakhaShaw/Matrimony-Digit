@@ -1,6 +1,7 @@
 package digit.matrimony.controller;
 
 import digit.matrimony.dto.SuggestionDTO;
+import digit.matrimony.dto.SuggestionRequestDTO;
 import digit.matrimony.service.SuggestionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -23,9 +24,14 @@ public class SuggestionController {
         return ResponseEntity.ok(suggestionService.createSuggestion(userId, suggestedUserId, matchScore));
     }
 
-    @GetMapping("/user/{userId}")
-    public ResponseEntity<List<SuggestionDTO>> getSuggestionsForUser(@PathVariable Long userId) {
-        return ResponseEntity.ok(suggestionService.getSuggestionsForUser(userId));
+    @PostMapping("/generate")
+    public ResponseEntity<List<SuggestionDTO>> generateSuggestions(@RequestBody SuggestionRequestDTO request) {
+        return ResponseEntity.ok(suggestionService.generateTopSuggestions(request.getUserId()));
+    }
+
+    @PostMapping("/user")
+    public ResponseEntity<List<SuggestionDTO>> getSuggestionsForUser(@RequestBody SuggestionRequestDTO request) {
+        return ResponseEntity.ok(suggestionService.getSuggestionsForUser(request.getUserId()));
     }
 
     @DeleteMapping("/{suggestionId}")

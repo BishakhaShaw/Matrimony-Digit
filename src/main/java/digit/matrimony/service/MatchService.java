@@ -56,6 +56,11 @@ public class MatchService {
         return matchMapper.toDto(matchRepository.save(match));
     }
 
+    public int getActiveMatchCount(Long userId) {
+        return matchRepository.countActiveMatchesByUserId(userId);
+    }
+
+
 
     public List<MatchDTO> getMatchesForUser(Long userId) {
         User user = userRepository.findById(userId).orElseThrow();

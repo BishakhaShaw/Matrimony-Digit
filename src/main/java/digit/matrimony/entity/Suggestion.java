@@ -7,10 +7,7 @@ import java.math.BigDecimal;
 
 @Entity
 @Table(name = "suggestions")
-@Getter
-@Setter
-@NoArgsConstructor
-@AllArgsConstructor
+@Data
 @Builder
 public class Suggestion {
 

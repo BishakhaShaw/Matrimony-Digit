@@ -59,6 +59,7 @@ public class PreferenceService {
         existing.setPreferredLocation(dto.getPreferredLocation());
         existing.setPreferredEducation(dto.getPreferredEducation());
         existing.setPreferredMaritalStatus(dto.getPreferredMaritalStatus());
+        existing.setPreferredGender(dto.getPreferredGender());
 
         Preference updated = preferenceRepository.save(existing);
         return preferenceMapper.toDto(updated);

@@ -45,4 +45,8 @@ public class    Preference {
 
     @Column(name = "preferred_marital_status", length = 20)
     private String preferredMaritalStatus;
+
+    @Column(name = "preferred_gender", length = 10)
+    private String preferredGender;
+
 }

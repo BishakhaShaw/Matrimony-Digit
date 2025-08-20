@@ -22,6 +22,7 @@ public class PreferenceMapper {
                 .preferredLocation(preference.getPreferredLocation())
                 .preferredEducation(preference.getPreferredEducation())
                 .preferredMaritalStatus(preference.getPreferredMaritalStatus())
+                .preferredGender(preference.getPreferredGender())
                 .build();
     }
 
@@ -39,6 +40,7 @@ public class PreferenceMapper {
                 .preferredLocation(dto.getPreferredLocation())
                 .preferredEducation(dto.getPreferredEducation())
                 .preferredMaritalStatus(dto.getPreferredMaritalStatus())
+                .preferredGender(dto.getPreferredGender())
                 .build();
     }
 }

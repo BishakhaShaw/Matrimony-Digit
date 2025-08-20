@@ -29,6 +29,13 @@ public class InterestService {
         User receiver = userRepository.findById(receiverId)
                 .orElseThrow(() -> new RuntimeException("Receiver not found"));
 
+
+        int activeMatchCount = matchService.getActiveMatchCount(senderId);
+        if (activeMatchCount >= 3) {
+            throw new IllegalStateException("You already have 3 active matches. Please remove one to send new interests.");
+        }
+
+
         Interest interest = Interest.builder()
                 .sender(sender)
                 .receiver(receiver)
