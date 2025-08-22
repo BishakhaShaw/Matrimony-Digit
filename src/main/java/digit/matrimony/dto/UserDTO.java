@@ -122,7 +122,8 @@ public class UserDTO {
     private String email;
     private String password;
     private String permanentLocation;
-    private String subscriptionType;
+    @Builder.Default
+    private String subscriptionType = "N";   // default to N
     private Boolean isActive;
 
     // --- Family Member Flow ---
@@ -143,7 +144,6 @@ public class UserDTO {
      * to help the frontend display "Family member of X".
      */
     private String linkedUsername;
-
     // --- Roles & System Generated Data ---
     private Short roleId;              // role reference only
     private String generatedPassword;  // set only when system generates password
