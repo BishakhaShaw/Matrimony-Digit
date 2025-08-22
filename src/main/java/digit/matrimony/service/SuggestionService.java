@@ -2,6 +2,7 @@ package digit.matrimony.service;
 
 import digit.matrimony.dto.SuggestionDTO;
 import digit.matrimony.entity.*;
+import digit.matrimony.exception.ResourceNotFoundException;
 import digit.matrimony.mapper.SuggestionMapper;
 import digit.matrimony.repository.PreferenceRepository;
 import digit.matrimony.repository.ProfileRepository;
@@ -27,7 +28,6 @@ public class SuggestionService {
     private final SuggestionMapper suggestionMapper;
     private final PreferenceRepository preferenceRepository;
     private final ProfileRepository profileRepository;
-
 
     private double calculateMatchScore(Preference preference, Profile profile) {
         double score = 0;
@@ -69,14 +69,14 @@ public class SuggestionService {
 
     public List<SuggestionDTO> generateTopSuggestions(Long userId) {
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found with ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
 
         Preference preference = preferenceRepository.findByUser(user)
-                .orElseThrow(() -> new RuntimeException("Preference not found for user ID: " + userId));
+                .orElseThrow(() -> new ResourceNotFoundException("Preference not found for user ID: " + userId));
 
         List<Profile> candidateProfiles = profileRepository.findAll().stream()
-                .filter(profile -> !profile.getUser().getId().equals(userId)) // exclude self
-                .filter(profile -> profile.getUser().getRole().getName().equalsIgnoreCase("User")) // only regular users
+                .filter(profile -> !profile.getUser().getId().equals(userId))
+                .filter(profile -> profile.getUser().getRole().getName().equalsIgnoreCase("User"))
                 .collect(Collectors.toList());
 
         List<Suggestion> suggestions = candidateProfiles.stream()
@@ -97,18 +97,20 @@ public class SuggestionService {
         return suggestions.stream().map(suggestionMapper::toDto).collect(Collectors.toList());
     }
 
-
     public List<SuggestionDTO> getSuggestionsForUser(Long userId) {
-        User user = userRepository.findById(userId).orElseThrow();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+
         return suggestionRepository.findByUser(user).stream()
                 .map(suggestionMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-
     public SuggestionDTO createSuggestion(Long userId, Long suggestedUserId, double matchScore) {
-        User user = userRepository.findById(userId).orElseThrow();
-        User suggestedUser = userRepository.findById(suggestedUserId).orElseThrow();
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found with ID: " + userId));
+        User suggestedUser = userRepository.findById(suggestedUserId)
+                .orElseThrow(() -> new ResourceNotFoundException("Suggested user not found with ID: " + suggestedUserId));
 
         Suggestion suggestion = Suggestion.builder()
                 .user(user)
@@ -124,4 +126,3 @@ public class SuggestionService {
         suggestionRepository.deleteById(suggestionId);
     }
 }
-
