@@ -13,7 +13,7 @@ public class AnalyticController {
     @Autowired
     private AnalyticService analyticService;
 
-    // Only users with ROLE_ADMIN can access this endpoint
+    //Only users with ROLE_ADMIN can access this endpoint
     @PreAuthorize("hasRole('ADMIN')")
     @GetMapping("/snapshot")
     public ResponseEntity<?> getAnalyticsSnapshot(@RequestParam(required = false, defaultValue = "global") String region) {
