@@ -3,6 +3,8 @@ package digit.matrimony.service;
 import digit.matrimony.dto.InterestDTO;
 import digit.matrimony.entity.Interest;
 import digit.matrimony.entity.User;
+import digit.matrimony.exception.BadRequestException;
+import digit.matrimony.exception.ResourceNotFoundException;
 import digit.matrimony.mapper.InterestMapper;
 import digit.matrimony.repository.InterestRepository;
 import digit.matrimony.repository.UserRepository;
@@ -11,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,16 +26,14 @@ public class InterestService {
 
     public InterestDTO sendInterest(Long senderId, Long receiverId) {
         User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new RuntimeException("Sender not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Sender not found with ID: " + senderId));
         User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new RuntimeException("Receiver not found"));
-
+                .orElseThrow(() -> new ResourceNotFoundException("Receiver not found with ID: " + receiverId));
 
         int activeMatchCount = matchService.getActiveMatchCount(senderId);
         if (activeMatchCount >= 3) {
-            throw new IllegalStateException("You already have 3 active matches. Please remove one to send new interests.");
+            throw new BadRequestException("You already have 3 active matches. Please remove one to send new interests.");
         }
-
 
         Interest interest = Interest.builder()
                 .sender(sender)
@@ -46,44 +45,34 @@ public class InterestService {
         Interest saved = interestRepository.save(interest);
         return interestMapper.toDto(saved);
     }
+
     public InterestDTO acceptInterest(Long interestId) {
         Interest interest = interestRepository.findById(interestId)
-                .orElseThrow(() -> new RuntimeException("Interest not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Interest not found with ID: " + interestId));
 
         interest.setStatus("accepted");
         interestRepository.save(interest);
 
-        Long senderId = interest.getSender().getId();
-        Long receiverId = interest.getReceiver().getId();
-
-        // Check if receiver had already accepted interest from sender
-//        Optional<Interest> mutualInterest = interestRepository.findBySenderIdAndReceiverIdAndStatus(
-//                receiverId, senderId, "accepted"
-//        );
-//
-//        if (mutualInterest.isPresent()) {
-            matchService.createMatch(senderId, receiverId);
-//        }
+        matchService.createMatch(interest.getSender().getId(), interest.getReceiver().getId());
 
         return interestMapper.toDto(interest);
     }
 
     public InterestDTO rejectInterest(Long interestId) {
         Interest interest = interestRepository.findById(interestId)
-                .orElseThrow(() -> new RuntimeException("Interest not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Interest not found with ID: " + interestId));
 
         if (!"pending".equalsIgnoreCase(interest.getStatus())) {
-            throw new IllegalStateException("Interest is not pending");
+            throw new BadRequestException("Interest is not pending and cannot be rejected.");
         }
 
         interest.setStatus("rejected");
         return interestMapper.toDto(interestRepository.save(interest));
     }
 
-
     public List<InterestDTO> getInterestsSentByUser(Long senderId) {
         User sender = userRepository.findById(senderId)
-                .orElseThrow(() -> new RuntimeException("Sender not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Sender not found with ID: " + senderId));
 
         return interestRepository.findBySender(sender).stream()
                 .map(interestMapper::toDto)
@@ -92,22 +81,13 @@ public class InterestService {
 
     public List<InterestDTO> getInterestsReceivedByUser(Long receiverId) {
         User receiver = userRepository.findById(receiverId)
-                .orElseThrow(() -> new RuntimeException("Receiver not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Receiver not found with ID: " + receiverId));
 
         return interestRepository.findByReceiver(receiver).stream()
                 .map(interestMapper::toDto)
                 .collect(Collectors.toList());
     }
 
-//    public InterestDTO updateInterestStatus(Long interestId, String status) {
-//        Interest interest = interestRepository.findById(interestId)
-//                .orElseThrow(() -> new RuntimeException("Interest not found"));
-//
-//        interest.setStatus(status);
-//        Interest updated = interestRepository.save(interest);
-//        return interestMapper.toDto(updated);
-//    }
-//
     public void deleteInterest(Long interestId) {
         interestRepository.deleteById(interestId);
     }
