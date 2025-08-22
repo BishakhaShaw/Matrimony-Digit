@@ -1,8 +1,16 @@
+
+
+
 package digit.matrimony.entity;
 
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -32,28 +40,41 @@ public class User {
     @Column(name = "permanent_location", length = 100)
     private String permanentLocation;
 
+    //  Role
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "role_id")
-    @ToString.Exclude
-    @EqualsAndHashCode.Exclude
+    @JoinColumn(name = "role_id", foreignKey = @ForeignKey(name = "fk_users_roles"))
     private Role role;
 
-    // Self reference: linked to another user (for family members)
+    //  Family Member ↔ Linked User
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "linked_user_id")
+    @JoinColumn(name = "linked_user_id", foreignKey = @ForeignKey(name = "fk_users_linked_users"))
     @ToString.Exclude
-    @EqualsAndHashCode.Exclude
     private User linkedUser;
 
+    //  Manager ↔ Users (Many-to-Many)
+    @ManyToMany
+    @JoinTable(
+            name = "manager_user_mapping",
+            joinColumns = @JoinColumn(name = "manager_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @ToString.Exclude
+    private Set<User> managedUsers = new HashSet<>();
+    // --- User Info ---
+
+
+    private Boolean isActive;
+
+    // --- Family Member Flow ---
+    @Column(name = "is_family_member")
+    private Boolean isFamilyMember = false;  // default: false
+
+    //  Subscription & Status
+    @Builder.Default
     @Column(name = "subscription_type", length = 1)
     private String subscriptionType = "N";
 
-    @Column(name = "is_active")
-    private Boolean isActive = true;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
-    private LocalDateTime updatedAt;
+    // --- System Generated ---
+    @Column(name = "generated_password")
+    private String generatedPassword;  // for auto-generated passwords
 }
