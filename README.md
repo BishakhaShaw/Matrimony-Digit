@@ -1,40 +1,52 @@
-💍 Capstone - Documentation
-🚀 Sprint Documentation: Digit Matrimony System (MVP)
-📌 Project Overview
-Project Title: Digit Matrimony System Purpose: To build a secure and scalable backend system for matrimonial matchmaking, enabling users to register, discover matches, communicate, and manage feedback and reports. The system supports multiple roles and subscription-based features.
+# 💍 Capstone - Documentation
 
-Target Users:
+## 🚀 Sprint Documentation: Digit Matrimony System (MVP)
 
-Registered Users
+---
 
-Family Members
+## 📌 Project Overview
 
-Managers
+- **Project Title**: Digit Matrimony System  
+- **Purpose**: Build a secure and scalable backend system for matrimonial matchmaking, enabling:
+  - User registration
+  - Match discovery
+  - Messaging
+  - Feedback and reporting
+  - Role-based access
+  - Subscription-based features
 
-Admins
+- **Target Users**:
+  - Registered Users
+  - Family Members
+  - Managers
+  - Admins
 
-🎯 Sprint Goal
+---
+
+## 🎯 Sprint Goal
+
 Deliver a Minimum Viable Product (MVP) that supports:
 
-✅ User registration and profile creation
+- ✅ User registration and profile creation  
+- ✅ Match discovery and interest exchange  
+- ✅ Messaging between matched users  
+- ✅ Role-based access control (User, Family, Manager, Admin)  
+- ✅ Feedback and reporting mechanisms  
+- ✅ Subscription-based feature access  
+- ✅ Analytics dashboard for admins  
 
-✅ Match discovery and interest exchange
+---
 
-✅ Messaging between matched users
+## 🧱 Sprint Duration
 
-✅ Role-based access control (User, Family, Manager, Admin)
+| **Start Date** | **End Date** | **Duration** |
+|----------------|--------------|--------------|
+| Aug 14, 2025   | Aug 22, 2025 | 8 days       |
 
-✅ Feedback and reporting mechanisms
+---
 
-✅ Subscription-based feature access
+## 📌 User Stories
 
-✅ Analytics dashboard for admins
-
-🧱 Sprint Duration
-Start Date	End Date	Duration
-Aug 14, 2025	Aug 22, 2025	8 days
-📌 User Stories
-markdown
 | **ID** | **Role**         | **Goal**                                                        | **Priority** | **Est. Time** |
 |--------|------------------|------------------------------------------------------------------|--------------|---------------|
 | US1    | User             | Register and create profile                                      | High         | 1 day         |
@@ -45,127 +57,112 @@ markdown
 | US6    | Admin            | View analytics and monitor activity                              | High         | 1 day         |
 | US7    | User             | Report inappropriate profiles                                    | High         | 1 day         |
 | US8    | System           | Escalate reports based on subscription status                    | Medium       | 1 day         |
-⚙️ System Architecture
-Tech Stack:
 
-Language: Java / Spring Boot
+---
 
-Database: PostgreSQL
+## ⚙️ System Architecture
 
-Authentication: JWT + Role-based via Spring Security
+- **Tech Stack**:
+  - Language: Java / Spring Boot
+  - Database: PostgreSQL
+  - Authentication: JWT + Role-based via Spring Security
+  - API Communication: REST
+  - Build Tool: Maven
+  - Testing: JUnit + Mockito
+  - Documentation: README + Hoppscotch/Postman
 
-API Communication: REST
+---
 
-Build Tool: Maven
+## 🧩 Core Modules
 
-Testing: JUnit + Mockito
+- **User & Role Management**
+  - Role-based login (Admin=1, Manager=2, User=3, Family=4)
+  - Linked accounts (e.g., family linked to user)
 
-Documentation: README + Hoppscotch/Postman
+- **Profile & Preferences**
+  - Education, caste, religion, income, location
+  - Match preferences (age, caste, location, etc.)
 
-🧩 Core Modules
-User & Role Management
+- **Matchmaking & Interests**
+  - View and send interest to up to 3 matches
+  - Match score via suggestion engine
 
-Role-based login (Admin=1, Manager=2, User=3, Family=4)
+- **Messaging**
+  - Chat between matched users
+  - Timestamped message history
 
-Linked accounts (e.g., family linked to user)
+- **Feedback & Reports**
+  - Family feedback on viewed profiles
+  - User-generated reports with escalation logic
 
-Profile & Preferences
+- **Subscription Management**
+  - Premium plans unlock escalated reporting
+  - Payment tracking and plan duration
 
-Education, caste, religion, income, location
+- **Manager & Admin Actions**
+  - Manager notes and match actions
+  - Admin analytics dashboard
 
-Match preferences (age, caste, location, etc.)
+- **Analytics**
+  - Regional user stats, revenue, match activity
 
-Matchmaking & Interests
+---
 
-View and send interest to up to 3 matches
+## 📄 Sample REST Endpoints
 
-Match score via suggestion engine
-
-Messaging
-
-Chat between matched users
-
-Timestamped message history
-
-Feedback & Reports
-
-Family feedback on viewed profiles
-
-User-generated reports with escalation logic
-
-Subscription Management
-
-Premium plans unlock escalated reporting
-
-Payment tracking and plan duration
-
-Manager & Admin Actions
-
-Manager notes and match actions
-
-Admin analytics dashboard
-
-Analytics
-
-Regional user stats, revenue, match activity
-
-📄 Sample REST Endpoints
-markdown
 | **Endpoint**                  | **Method** | **Role**   | **Description**                        |
 |------------------------------|------------|------------|----------------------------------------|
-| /api/users/register          | POST       | Public     | Register new user                      |
-| /api/users/login             | POST       | Public     | Login and receive JWT                  |
-| /api/profiles/{id}           | GET/PUT    | User       | View or update profile                 |
-| /api/preferences             | POST       | User       | Set match preferences                  |
-| /api/matches/view            | GET        | User       | View suggested matches                 |
-| /api/interests/send/{id}     | POST       | User       | Send interest                          |
-| /api/messages/{matchId}      | GET/POST   | User       | Chat with matched user                 |
-| /api/family/feedback         | POST       | Family     | Submit feedback                        |
-| /api/reports                 | POST       | User       | Report another user                    |
-| /api/manager/actions         | PATCH      | Manager    | Perform match actions                  |
-| /api/admin/analytics         | GET        | Admin      | View system analytics                  |
-✅ Acceptance Criteria
-[ ] Users can register and log in with role-based access
+| `/api/users/register`        | POST       | Public     | Register new user                      |
+| `/api/users/login`           | POST       | Public     | Login and receive JWT                  |
+| `/api/profiles/{id}`         | GET/PUT    | User       | View or update profile                 |
+| `/api/preferences`           | POST       | User       | Set match preferences                  |
+| `/api/matches/view`          | GET        | User       | View suggested matches                 |
+| `/api/interests/send/{id}`   | POST       | User       | Send interest                          |
+| `/api/messages/{matchId}`    | GET/POST   | User       | Chat with matched user                 |
+| `/api/family/feedback`       | POST       | Family     | Submit feedback                        |
+| `/api/reports`               | POST       | User       | Report another user                    |
+| `/api/manager/actions`       | PATCH      | Manager    | Perform match actions                  |
+| `/api/admin/analytics`       | GET        | Admin      | View system analytics                  |
 
-[ ] Profiles and preferences are stored and retrievable
+---
 
-[ ] Match suggestions and interest flow are functional
+## ✅ Acceptance Criteria
 
-[ ] Messaging works only between matched users
+- Users can register and log in with role-based access  
+- Profiles and preferences are stored and retrievable  
+- Match suggestions and interest flow are functional  
+- Messaging works only between matched users  
+- Family feedback is linked to match and profile  
+- Reports escalate based on subscription type  
+- Admin dashboard shows analytics snapshot  
 
-[ ] Family feedback is linked to match and profile
+---
 
-[ ] Reports escalate based on subscription type
+## 📊 Deliverables
 
-[ ] Admin dashboard shows analytics snapshot
+- REST API endpoints  
+- PostgreSQL schema  
+- JWT-based authentication  
+- Unit tests for all services  
+- Postman collection for API testing  
+- README with setup instructions  
 
-📊 Deliverables
-REST API endpoints
+---
 
-PostgreSQL schema
+## 🧠 Learning Objectives
 
-JWT-based authentication
+- Implement layered architecture with Spring Boot  
+- Use JWT for secure role-based access  
+- Apply business logic for matchmaking and escalation  
+- Integrate feedback and reporting workflows  
+- Document APIs using Hoppscotch and README  
+- Practice agile-style sprint planning and delivery  
 
-Unit tests for all services
+---
 
-Postman collection for API testing
+## 📁 Project Structure
 
-README with setup instructions
-
-🧠 Learning Objectives
-Implement layered architecture with Spring Boot
-
-Use JWT for secure role-based access
-
-Apply business logic for matchmaking and escalation
-
-Integrate feedback and reporting workflows
-
-Document APIs using Hoppscotch and README
-
-Practice agile-style sprint planning and delivery
-
-📁 Project Structure
+```plaintext
 /Matrimony-Digit/
 │
 ├── src/
@@ -192,4 +189,3 @@ Practice agile-style sprint planning and delivery
 ├── pom.xml                                 # Maven build file
 ├── README.md                               # Project overview and setup
 └── postman-collection/                     # API testing collection (if applicable)
-
