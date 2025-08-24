@@ -1,3 +1,4 @@
+
 package digit.matrimony.service;
 
 import digit.matrimony.dto.LoginRequest;
@@ -29,7 +30,7 @@ public class UserService {
     private final JwtUtil jwtUtil;
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
 
-    // --- Get All Users (Admin / Manager only) ---
+    //  Get All Users (Admin / Manager only)
     public List<UserDTO> getAllUsers(Long requesterId) {
         User requester = getUserOrThrow(requesterId);
 
@@ -42,7 +43,7 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    // --- Get User by ID ---
+
     public UserDTO getUserById(Long requesterId, Long targetId) {
         User requester = getUserOrThrow(requesterId);
         User target = getUserOrThrow(targetId);
@@ -53,14 +54,14 @@ public class UserService {
         throw new BadRequestException("Access denied: You cannot view other users' details");
     }
 
-    // --- Get My Profile ---
+
     public UserDTO getMyProfile(Long id) {
         return UserMapper.toDTO(getUserOrThrow(id));
     }
 
-    // --- Create User (Main User OR Family Member) ---
+    //  Create User (Main User OR Family Member)
     public UserDTO createUser(UserDTO dto) {
-        // --- Check uniqueness ---
+        //  Check uniqueness
         if (userRepository.existsByUsername(dto.getUsername())) {
             throw new BadRequestException("Username already exists: " + dto.getUsername());
         }
@@ -68,14 +69,14 @@ public class UserService {
             throw new BadRequestException("Email already exists: " + dto.getEmail());
         }
 
-        // --- Enforce subscription type ---
+        // Enforce subscription type
         if (dto.getSubscriptionType() == null) {
             dto.setSubscriptionType("N");  // default
         } else if (!"N".equalsIgnoreCase(dto.getSubscriptionType())) {
             throw new BadRequestException("You can create account as a normal user only. Upgrade after account creation.");
         }
 
-        // --- Assign Role ---
+        // Assign Role
         Role role;
         if (dto.getRoleId() != null) {
             role = roleRepository.findById(dto.getRoleId())
@@ -92,7 +93,7 @@ public class UserService {
                     .orElseThrow(() -> new ResourceNotFoundException("Default role USER not found"));
         }
 
-        // --- Handle Family Linking ---
+        //  Handle Family Linking
         User linkedUser = null;
         if (dto.getIsFamilyMember() != null && dto.getIsFamilyMember()) {
             if (dto.getLinkedUserId() == null) {
@@ -103,10 +104,10 @@ public class UserService {
                             "Linked User not found with id: " + dto.getLinkedUserId()));
         }
 
-        // --- Map DTO -> Entity ---
+
         User user = UserMapper.toEntity(dto, role, linkedUser);
 
-        // --- Handle Password ---
+
         String plainPassword = dto.getPassword();
         if (plainPassword == null || plainPassword.isBlank()) {
             plainPassword = generateSecurePassword();
@@ -119,20 +120,20 @@ public class UserService {
 
         user = userRepository.save(user);
 
-        // --- Map back to DTO ---
+
         UserDTO responseDto = UserMapper.toDTO(user);
         responseDto.setGeneratedPassword(dto.getGeneratedPassword());
         return responseDto;
     }
 
-    // --- Get User by Username ---
+
     public UserDTO getUserByUsername(String username) {
         User user = userRepository.findByUsernameIgnoreCase(username)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found with username: " + username));
         return UserMapper.toDTO(user);
     }
 
-    // --- Update User (Self only) ---
+    //  Update User (Self only)
     public UserDTO updateUser(Long requesterId, Long userId, UserDTO dto) {
         User requester = getUserOrThrow(requesterId);
         User existingUser = getUserOrThrow(userId);
@@ -150,7 +151,7 @@ public class UserService {
             throw new BadRequestException("Email already in use");
         }
 
-        // --- Prevent subscription type update here ---
+        //  Prevent subscription type update here
         if (dto.getSubscriptionType() != null &&
                 !dto.getSubscriptionType().equalsIgnoreCase(existingUser.getSubscriptionType())) {
             throw new BadRequestException("Subscription type cannot be changed here. Please use the upgrade flow.");
@@ -164,7 +165,7 @@ public class UserService {
         return UserMapper.toDTO(userRepository.save(existingUser));
     }
 
-    // --- Delete User (Admin / Manager only) ---
+    //  Delete User (Admin / Manager only)
     public void deleteUser(Long requesterId, Long userId) {
         User requester = getUserOrThrow(requesterId);
         User targetUser = getUserOrThrow(userId);
@@ -180,7 +181,7 @@ public class UserService {
         userRepository.delete(targetUser);
     }
 
-    // --- Approve Manager (Admin only) ---
+    //  Approve Manager (Admin only)
     public UserDTO approveManager(Long adminId, Long userId) {
         User admin = getUserOrThrow(adminId);
         if (!isAdmin(admin)) throw new BadRequestException("Only Admin can approve a Manager");
@@ -195,7 +196,7 @@ public class UserService {
         return UserMapper.toDTO(user);
     }
 
-    // --- Login ---
+    //  Login
     public LoginResponse login(LoginRequest request) {
         if (request.getEmailOrUsername() == null || request.getPassword() == null) {
             throw new BadRequestException("Username/Email and password are required");
@@ -219,7 +220,7 @@ public class UserService {
                 .build();
     }
 
-    // --- Helpers ---
+    //  Helpers
     private String generateSecurePassword() {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%";
         SecureRandom random = new SecureRandom();

@@ -1,6 +1,6 @@
 package digit.matrimony.controller;
 
-import digit.matrimony.dto.MatchCreateRequestDTO;
+
 import digit.matrimony.dto.MatchDTO;
 import digit.matrimony.service.MatchService;
 import jakarta.validation.Valid;

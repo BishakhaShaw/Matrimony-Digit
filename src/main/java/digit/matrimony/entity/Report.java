@@ -14,17 +14,16 @@ import java.time.LocalDateTime;
 public class Report {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy =  GenerationType.IDENTITY)
     private Long id;
 
-    // who reported
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch= FetchType.LAZY)
     @JoinColumn(name = "reporter_id")
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     private User reporter;
 
-    // who was reported
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reported_user_id")
     @ToString.Exclude
@@ -36,7 +35,7 @@ public class Report {
 
     private String status = "open";
 
-    // reviewed by user (manager/admin)
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "reviewed_by_user_id")
     @ToString.Exclude

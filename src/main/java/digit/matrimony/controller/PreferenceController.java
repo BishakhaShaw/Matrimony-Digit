@@ -14,21 +14,21 @@ public class PreferenceController {
 
     private final PreferenceService preferenceService;
 
-    // ✅ Get preference by user ID
+
     @GetMapping("/user/{userId}")
     public ResponseEntity<PreferenceDTO> getPreferenceByUserId(@PathVariable Long userId) {
         PreferenceDTO dto = preferenceService.getPreferenceByUserId(userId);
         return ResponseEntity.ok(dto);
     }
 
-    // ✅ Create new preference
+
     @PostMapping("/create")
     public ResponseEntity<PreferenceDTO> createPreference(@RequestBody PreferenceDTO dto) {
         PreferenceDTO created = preferenceService.createPreference(dto);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    // ✅ Update existing preference
+
     @PutMapping("/update/{id}")
     public ResponseEntity<PreferenceDTO> updatePreference(
             @PathVariable Long id,
@@ -37,7 +37,6 @@ public class PreferenceController {
         return ResponseEntity.ok(updated);
     }
 
-    // ✅ Delete preference
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePreference(@PathVariable Long id) {
         preferenceService.deletePreference(id);
