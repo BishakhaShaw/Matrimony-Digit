@@ -77,4 +77,12 @@ public class User {
     // --- System Generated ---
     @Column(name = "generated_password")
     private String generatedPassword;  // for auto-generated passwords
+
+    @CreationTimestamp
+    @Column(name = "created_at", updatable = false, nullable = false)
+    private LocalDateTime createdAt;
+
+    @UpdateTimestamp
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
 }
