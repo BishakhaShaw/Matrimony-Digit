@@ -166,7 +166,6 @@ Document APIs using Hoppscotch and README
 Practice agile-style sprint planning and delivery
 
 📁 Project Structure
-plaintext
 /Matrimony-Digit/
 │
 ├── src/
@@ -193,3 +192,4 @@ plaintext
 ├── pom.xml                                 # Maven build file
 ├── README.md                               # Project overview and setup
 └── postman-collection/                     # API testing collection (if applicable)
+
