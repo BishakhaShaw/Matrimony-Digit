@@ -67,27 +67,6 @@
 //}
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 //
 //package digit.matrimony.mapper;
 //
@@ -122,27 +101,6 @@
 //                .build();
 //    }
 //}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 package digit.matrimony.mapper;

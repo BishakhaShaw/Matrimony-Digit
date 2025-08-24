@@ -46,12 +46,6 @@ public class InterestController {
         return ResponseEntity.ok(interests);
     }
 
-//    @PutMapping("/{interestId}/status")
-//    public ResponseEntity<InterestDTO> updateStatus(@PathVariable Long interestId, @RequestParam String status) {
-//        InterestDTO updated = interestService.updateInterestStatus(interestId, status);
-//        return ResponseEntity.ok(updated);
-//    }
-
     @DeleteMapping("/{interestId}")
     public ResponseEntity<Void> deleteInterest(@PathVariable Long interestId) {
         interestService.deleteInterest(interestId);

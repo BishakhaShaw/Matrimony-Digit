@@ -6,7 +6,7 @@ import digit.matrimony.entity.Subscription;
 
 public class SubscriptionMapper {
 
-    // Convert entity to response DTO
+
     public static SubscriptionResponseDTO toDTO(Subscription subscription) {
         return SubscriptionResponseDTO.builder()
                 .id(subscription.getId())
@@ -19,14 +19,13 @@ public class SubscriptionMapper {
                 .build();
     }
 
-    // Convert request DTO to entity
+
     public static Subscription toEntity(SubscriptionRequestDTO dto) {
         Subscription subscription = new Subscription();
         subscription.setPlanName(dto.getPlanName());
         subscription.setAmount(dto.getAmount());
         subscription.setStartDate(dto.getStartDate());
         subscription.setEndDate(dto.getEndDate());
-        // paymentStatus is not set from request DTO
         return subscription;
     }
 }

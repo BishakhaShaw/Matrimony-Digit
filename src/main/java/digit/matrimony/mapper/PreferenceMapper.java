@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class PreferenceMapper {
 
-    // Convert Preference entity to PreferenceDTO
+
     public PreferenceDTO toDto(Preference preference) {
         if (preference == null) return null;
 
@@ -26,7 +26,7 @@ public class PreferenceMapper {
                 .build();
     }
 
-    // Convert PreferenceDTO to Preference entity
+
     public Preference toEntity(PreferenceDTO dto, User user) {
         if (dto == null) return null;
 
